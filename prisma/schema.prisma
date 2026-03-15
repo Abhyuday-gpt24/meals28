@@ -1,0 +1,159 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+
+
+// --------------------------------------
+// ENUMS
+// --------------------------------------
+
+enum Role {
+  CUSTOMER
+  STAFF
+  DRIVER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  ACCEPTED
+  PREPARING
+  READY
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  COD     // Cash on Delivery
+  ONLINE  // UPI, Card, etc.
+}
+
+// --------------------------------------
+// MODELS
+// --------------------------------------
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  firstName     String?
+  lastName      String?
+  phone         String?   @unique
+  role          Role      @default(CUSTOMER)
+  
+  addresses     Address[]
+  
+  // A user can place orders (as a customer) AND be assigned orders (as a driver)
+  orders        Order[]   @relation("CustomerOrders")
+  deliveries    Order[]   @relation("DriverDeliveries") 
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Address {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  street        String
+  city          String
+  state         String
+  zipCode       String
+  isDefault     Boolean   @default(false)
+  
+  orders        Order[]   // Links historical orders to the address used
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Category {
+  id            String     @id @default(uuid())
+  name          String     @unique
+  description   String?
+  
+  menuItems     MenuItem[]
+  
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model MenuItem {
+  id            String      @id @default(uuid())
+  name          String
+  description   String?
+  price         Float
+  imageUrl      String?
+  isAvailable   Boolean     @default(true)
+  isVegetarian  Boolean     @default(true) // Helpful dietary toggle
+  
+  categoryId    String?
+  category      Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  
+  orderItems    OrderItem[]
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Order {
+  id                String        @id @default(uuid())
+  
+  // Customer details
+  userId            String
+  user              User          @relation("CustomerOrders", fields: [userId], references: [id])
+  
+  // Delivery details
+  deliveryAddressId String
+  deliveryAddress   Address       @relation(fields: [deliveryAddressId], references: [id])
+  
+  // Driver assignment
+  driverId          String?
+  driver            User?         @relation("DriverDeliveries", fields: [driverId], references: [id])
+  
+  // Order status & payment
+  status            OrderStatus   @default(PENDING)
+  paymentStatus     PaymentStatus @default(PENDING)
+  paymentMethod     PaymentMethod @default(ONLINE)
+  totalAmount       Float
+  specialNotes      String?       // E.g., "Don't ring the doorbell"
+  
+  orderItems        OrderItem[]
+  
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+}
+
+model OrderItem {
+  id            String   @id @default(uuid())
+  orderId       String
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  menuItemId    String
+  menuItem      MenuItem @relation(fields: [menuItemId], references: [id])
+  
+  quantity      Int
+  unitPrice     Float    // Captured at checkout so past orders don't change if menu prices update
+  customization String?  // E.g., "Extra spicy"
+}
+
