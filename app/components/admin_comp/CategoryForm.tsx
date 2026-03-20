@@ -98,7 +98,7 @@ export default function CategoryForm({
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-indigo-600"
+              className="w-full rounded-lg border px-3 py-2 text-sm text-gray-900 outline-none focus:border-indigo-600"
             />
           </div>
           <div className="flex-1">
@@ -108,7 +108,7 @@ export default function CategoryForm({
             <input
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-indigo-600"
+              className="w-full rounded-lg border px-3 py-2 text-sm text-gray-900 outline-none focus:border-indigo-600"
             />
           </div>
           <button
@@ -149,14 +149,14 @@ export default function CategoryForm({
                     <input
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full rounded border px-2 py-1 text-sm"
+                      className="w-full rounded border px-2 py-1 text-sm text-gray-900"
                     />
                   </td>
                   <td className="px-6 py-3">
                     <input
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
-                      className="w-full rounded border px-2 py-1 text-sm"
+                      className="w-full rounded border px-2 py-1 text-sm text-gray-900"
                     />
                   </td>
                   <td className="px-6 py-3">{cat._count.menuItems}</td>

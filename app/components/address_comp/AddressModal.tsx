@@ -88,7 +88,7 @@ export default function AddressModal({ isOpen, onClose }: AddressModalProps) {
               name="street"
               required
               placeholder="123 Main St, Apt 4B"
-              className="mt-1 w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-sm outline-none focus:border-indigo-600 focus:bg-white focus:ring-1 focus:ring-indigo-600"
+              className="mt-1 w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-sm text-gray-900 outline-none focus:border-indigo-600 focus:bg-white focus:ring-1 focus:ring-indigo-600"
             />
           </div>
 
@@ -102,7 +102,7 @@ export default function AddressModal({ isOpen, onClose }: AddressModalProps) {
                 name="city"
                 required
                 placeholder="Agra"
-                className="mt-1 w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-sm outline-none focus:border-indigo-600 focus:bg-white focus:ring-1 focus:ring-indigo-600"
+                className="mt-1 w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-sm text-gray-900 outline-none focus:border-indigo-600 focus:bg-white focus:ring-1 focus:ring-indigo-600"
               />
             </div>
             <div>
@@ -114,7 +114,7 @@ export default function AddressModal({ isOpen, onClose }: AddressModalProps) {
                 name="state"
                 required
                 placeholder="UP"
-                className="mt-1 w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-sm outline-none focus:border-indigo-600 focus:bg-white focus:ring-1 focus:ring-indigo-600"
+                className="mt-1 w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-sm text-gray-900 outline-none focus:border-indigo-600 focus:bg-white focus:ring-1 focus:ring-indigo-600"
               />
             </div>
           </div>
@@ -129,7 +129,7 @@ export default function AddressModal({ isOpen, onClose }: AddressModalProps) {
               name="zipCode"
               required
               placeholder="282001"
-              className="mt-1 w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-sm outline-none focus:border-indigo-600 focus:bg-white focus:ring-1 focus:ring-indigo-600"
+              className="mt-1 w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-sm text-gray-900 outline-none focus:border-indigo-600 focus:bg-white focus:ring-1 focus:ring-indigo-600"
             />
           </div>
 

@@ -11,6 +11,15 @@ export default async function MenuPage({ searchParams }: MenuPageProps) {
   const selectedCategory = params.category;
   const searchQuery = params.q;
 
+  const categoryName = selectedCategory
+    ? (
+        await prisma.category.findUnique({
+          where: { id: selectedCategory },
+          select: { name: true },
+        })
+      )?.name ?? "Unknown Category"
+    : null;
+
   const menuItems = await prisma.menuItem.findMany({
     where: {
       isAvailable: true,
@@ -59,7 +68,7 @@ export default async function MenuPage({ searchParams }: MenuPageProps) {
           <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">
             {searchQuery
               ? `Results for "${searchQuery}"`
-              : selectedCategory}
+              : categoryName}
           </h1>
         </div>
       )}

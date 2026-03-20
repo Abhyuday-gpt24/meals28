@@ -42,7 +42,7 @@ export default function SearchBar() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search for dishes..."
-        className="h-10 w-full rounded-full border border-gray-200 bg-gray-50 pl-10 pr-10 text-sm outline-none transition-all focus:border-indigo-600 focus:bg-white focus:ring-1 focus:ring-indigo-600"
+        className="h-10 w-full rounded-full border border-gray-200 bg-gray-50 pl-10 pr-10 text-sm text-gray-900 outline-none transition-all focus:border-indigo-600 focus:bg-white focus:ring-1 focus:ring-indigo-600"
       />
 
       {/* Clear Button (Only shows if there is text) */}

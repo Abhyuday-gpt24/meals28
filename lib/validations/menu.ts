@@ -5,7 +5,11 @@ export const menuItemSchema = z.object({
   description: z.string().optional(),
   price: z.number().positive("Price must be greater than 0"),
   imageUrl: z
-    .union([z.string().url("Must be a valid URL"), z.literal("")])
+    .union([
+      z.string().url("Must be a valid URL"),
+      z.string().startsWith("/", "Must be a valid URL or path starting with /"),
+      z.literal(""),
+    ])
     .optional(),
   isAvailable: z.boolean().default(true),
   isVegetarian: z.boolean().default(true),
