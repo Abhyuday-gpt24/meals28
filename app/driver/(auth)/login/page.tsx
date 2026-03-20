@@ -11,7 +11,7 @@ function SubmitButton({ isLogin }: { isLogin: boolean }) {
     <button
       type="submit"
       disabled={pending}
-      className="flex w-full justify-center rounded-md bg-indigo-600 py-2.5 px-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+      className="flex w-full justify-center rounded-md bg-green-600 py-2.5 px-4 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
     >
       {pending ? "Processing..." : isLogin ? "Sign In" : "Sign Up"}
     </button>
@@ -23,7 +23,7 @@ type ActionResult = {
   fieldErrors?: Record<string, string[]>;
 } | null;
 
-export default function CustomerAuthPage() {
+export default function DriverAuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [result, setResult] = useState<ActionResult>(null);
 
@@ -39,21 +39,21 @@ export default function CustomerAuthPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 rounded-2xl bg-white p-8 shadow-xl ring-1 ring-gray-900/5">
+    <div className="flex min-h-screen items-center justify-center bg-green-50 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8 rounded-2xl bg-white p-8 shadow-xl ring-1 ring-green-200">
         <div className="text-center">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-            Meals28
+            MEALS28
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-green-600 font-medium">
             {isLogin
-              ? "Welcome back! Please sign in."
-              : "Create your account."}
+              ? "Driver Portal — Sign in to continue"
+              : "Driver Portal — Create your account"}
           </p>
         </div>
 
         <form action={clientAction} className="mt-8 space-y-6">
-          <input type="hidden" name="role" value="CUSTOMER" />
+          <input type="hidden" name="role" value="DRIVER" />
 
           <div className="space-y-4">
             {!isLogin && (
@@ -70,7 +70,7 @@ export default function CustomerAuthPage() {
                       id="firstName"
                       name="firstName"
                       type="text"
-                      className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3"
+                      className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6 px-3"
                     />
                     {fieldError("firstName") && (
                       <p className="mt-1 text-xs text-red-600">
@@ -89,7 +89,7 @@ export default function CustomerAuthPage() {
                       id="lastName"
                       name="lastName"
                       type="text"
-                      className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3"
+                      className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6 px-3"
                     />
                     {fieldError("lastName") && (
                       <p className="mt-1 text-xs text-red-600">
@@ -113,7 +113,7 @@ export default function CustomerAuthPage() {
                     id="phone"
                     name="phone"
                     type="tel"
-                    className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3"
+                    className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6 px-3"
                   />
                   {fieldError("phone") && (
                     <p className="mt-1 text-xs text-red-600">
@@ -137,7 +137,7 @@ export default function CustomerAuthPage() {
                 type="email"
                 required
                 autoComplete="email"
-                className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3"
+                className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6 px-3"
               />
               {fieldError("email") && (
                 <p className="mt-1 text-xs text-red-600">
@@ -159,7 +159,7 @@ export default function CustomerAuthPage() {
                 type="password"
                 required
                 autoComplete={isLogin ? "current-password" : "new-password"}
-                className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3"
+                className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6 px-3"
               />
               {fieldError("password") && (
                 <p className="mt-1 text-xs text-red-600">
@@ -185,7 +185,7 @@ export default function CustomerAuthPage() {
               setIsLogin(!isLogin);
               setResult(null);
             }}
-            className="text-sm font-semibold text-indigo-600 hover:text-indigo-500 transition-colors"
+            className="text-sm font-semibold text-green-600 hover:text-green-500 transition-colors"
           >
             {isLogin
               ? "Don't have an account? Sign up"

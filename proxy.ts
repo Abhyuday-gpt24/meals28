@@ -47,15 +47,45 @@ export async function proxy(request: NextRequest) {
     path.startsWith("/orders") ||
     path.startsWith("/profile");
 
-  const isProtected =
-    isAdminRoute || isKitchenRoute || isDriverRoute || isAuthRequired;
+  // Login pages within role routes must be accessible without auth
+  const isRoleAuthPage =
+    path === "/admin/login" ||
+    path === "/kitchen/login" ||
+    path === "/driver/login";
+  const isAnyLoginPage = path === "/login" || isRoleAuthPage;
 
-  // 5. Kick out completely unauthenticated users
+  const isProtected =
+    (isAdminRoute || isKitchenRoute || isDriverRoute || isAuthRequired) &&
+    !isRoleAuthPage;
+
+  // 5. Redirect authenticated users away from login pages
+  if (user && isAnyLoginPage) {
+    const dbUserForRedirect = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { role: true },
+    });
+    const dashboards: Record<string, string> = {
+      CUSTOMER: "/",
+      ADMIN: "/admin",
+      STAFF: "/kitchen",
+      DRIVER: "/driver",
+    };
+    const dashboard = dashboards[dbUserForRedirect?.role ?? "CUSTOMER"] ?? "/";
+    return NextResponse.redirect(new URL(dashboard, request.url));
+  }
+
+  // 6. Kick out unauthenticated users to the correct login page
   if (isProtected && !user) {
+    if (isAdminRoute)
+      return NextResponse.redirect(new URL("/admin/login", request.url));
+    if (isKitchenRoute)
+      return NextResponse.redirect(new URL("/kitchen/login", request.url));
+    if (isDriverRoute)
+      return NextResponse.redirect(new URL("/driver/login", request.url));
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // 6. Role-Based Access Control (RBAC) Logic using Prisma
+  // 7. Role-Based Access Control (RBAC) Logic using Prisma
   if (user && (isAdminRoute || isKitchenRoute || isDriverRoute)) {
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
@@ -80,11 +110,11 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  // 7. Return the response with refreshed secure cookies
+  // 8. Return the response with refreshed secure cookies
   return supabaseResponse;
 }
 
-// 8. Configure exactly which routes this proxy should intercept
+// 9. Configure exactly which routes this proxy should intercept
 export const config = {
   matcher: [
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",

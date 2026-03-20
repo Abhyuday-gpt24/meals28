@@ -1,7 +1,8 @@
 import { getAuthenticatedUser } from "@/lib/auth/getUser";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, UtensilsCrossed, Tag } from "lucide-react";
+import { LayoutDashboard, UtensilsCrossed, Tag, LogOut } from "lucide-react";
+import { logout } from "@/app/actions/auth";
 
 export default async function AdminLayout({
   children,
@@ -14,7 +15,7 @@ export default async function AdminLayout({
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <aside className="w-64 border-r bg-white">
+      <aside className="flex w-64 flex-col border-r bg-white">
         <div className="border-b px-6 py-5">
           <h1 className="text-lg font-black text-gray-900">MEALS28</h1>
           <p className="text-xs font-medium text-gray-500">Admin Dashboard</p>
@@ -42,6 +43,17 @@ export default async function AdminLayout({
             Categories
           </Link>
         </nav>
+        <div className="mt-auto border-t p-4">
+          <form action={logout}>
+            <button
+              type="submit"
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
+            </button>
+          </form>
+        </div>
       </aside>
 
       {/* Main Content */}

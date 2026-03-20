@@ -3,10 +3,14 @@
 import { useState } from "react";
 import { useCartStore } from "../../store/cartStore";
 import CartDrawer from "../cart_comp/CartDrawer";
-import SearchBar from "../search_bar_comp/SearchBar"; // Import our new component
-import Link from "next/link";
+import SearchBar from "../search_bar_comp/SearchBar";
+import ProfileDropdown from "../navbar/ProfileDropdown";
 
-export default function Header() {
+type HeaderProps = {
+  user: { firstName: string | null; email: string } | null;
+};
+
+export default function Header({ user }: HeaderProps) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const items = useCartStore((state) => state.items);
 
@@ -54,20 +58,8 @@ export default function Header() {
             )}
           </button>
 
-          {/* User Profile Button */}
-          <Link
-            href="/profile"
-            className="group relative flex h-9 w-9 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-indigo-200 bg-indigo-100 transition-all hover:ring-2 hover:ring-indigo-600 hover:ring-offset-2 active:scale-90"
-            title="View Profile"
-          >
-            <svg
-              className="mt-1.5 h-7 w-full text-indigo-500 transition-colors group-hover:text-indigo-600"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-          </Link>
+          {/* User Profile Dropdown */}
+          <ProfileDropdown user={user} />
         </div>
       </header>
 

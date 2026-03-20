@@ -54,7 +54,12 @@ export default function MenuItemForm({
     if (result.success) {
       onClose();
     } else {
-      setError(result.error || "Something went wrong");
+      const details = result.details
+        ? Object.entries(result.details)
+            .map(([field, msgs]) => `${field}: ${(msgs as string[]).join(", ")}`)
+            .join("; ")
+        : "";
+      setError(details || result.error || "Something went wrong");
     }
   }
 

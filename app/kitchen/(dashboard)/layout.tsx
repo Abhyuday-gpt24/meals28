@@ -1,5 +1,7 @@
 import { getAuthenticatedUser } from "@/lib/auth/getUser";
 import { redirect } from "next/navigation";
+import { LogOut } from "lucide-react";
+import { logout } from "@/app/actions/auth";
 
 export default async function KitchenLayout({
   children,
@@ -13,10 +15,19 @@ export default async function KitchenLayout({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="border-b bg-white px-6 py-4">
+      <header className="flex items-center justify-between border-b bg-white px-6 py-4">
         <h1 className="text-lg font-black text-gray-900">
           MEALS28 <span className="font-medium text-gray-500">Kitchen</span>
         </h1>
+        <form action={logout}>
+          <button
+            type="submit"
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </button>
+        </form>
       </header>
       <main className="p-6">{children}</main>
     </div>
