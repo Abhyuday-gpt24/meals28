@@ -41,15 +41,22 @@ export async function proxy(request: NextRequest) {
   // 4. Define our protected routes
   const isAdminRoute = path.startsWith("/admin");
   const isKitchenRoute = path.startsWith("/kitchen");
+  const isDriverRoute = path.startsWith("/driver");
+  const isAuthRequired =
+    path.startsWith("/checkout") ||
+    path.startsWith("/orders") ||
+    path.startsWith("/profile");
+
+  const isProtected =
+    isAdminRoute || isKitchenRoute || isDriverRoute || isAuthRequired;
 
   // 5. Kick out completely unauthenticated users
-  if ((isAdminRoute || isKitchenRoute) && !user) {
+  if (isProtected && !user) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   // 6. Role-Based Access Control (RBAC) Logic using Prisma
-  if (user && (isAdminRoute || isKitchenRoute)) {
-    // Fetch the user role directly from our database using Prisma
+  if (user && (isAdminRoute || isKitchenRoute || isDriverRoute)) {
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
       select: { role: true },
@@ -59,12 +66,17 @@ export async function proxy(request: NextRequest) {
 
     // Enforce Admin rules
     if (isAdminRoute && role !== "ADMIN") {
-      return NextResponse.redirect(new URL("/", request.url)); // Kick to home
+      return NextResponse.redirect(new URL("/", request.url));
     }
 
     // Enforce Kitchen rules (Admins and Staff can view it)
     if (isKitchenRoute && role !== "STAFF" && role !== "ADMIN") {
-      return NextResponse.redirect(new URL("/", request.url)); // Kick to home
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+
+    // Enforce Driver rules (Admins and Drivers can view it)
+    if (isDriverRoute && role !== "DRIVER" && role !== "ADMIN") {
+      return NextResponse.redirect(new URL("/", request.url));
     }
   }
 

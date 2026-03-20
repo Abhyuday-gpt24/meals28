@@ -102,7 +102,7 @@ model MenuItem {
   id            String      @id @default(uuid())
   name          String
   description   String?
-  price         Float
+  price         Decimal
   imageUrl      String?
   isAvailable   Boolean     @default(true)
   isVegetarian  Boolean     @default(true) // Helpful dietary toggle
@@ -135,7 +135,7 @@ model Order {
   status            OrderStatus   @default(PENDING)
   paymentStatus     PaymentStatus @default(PENDING)
   paymentMethod     PaymentMethod @default(ONLINE)
-  totalAmount       Float
+  totalAmount       Decimal
   specialNotes      String?       // E.g., "Don't ring the doorbell"
   
   orderItems        OrderItem[]
@@ -153,7 +153,7 @@ model OrderItem {
   menuItem      MenuItem @relation(fields: [menuItemId], references: [id])
   
   quantity      Int
-  unitPrice     Float    // Captured at checkout so past orders don't change if menu prices update
+  unitPrice     Decimal  // Captured at checkout so past orders don't change if menu prices update
   customization String?  // E.g., "Extra spicy"
 }
 

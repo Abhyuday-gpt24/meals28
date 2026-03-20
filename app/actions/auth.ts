@@ -1,6 +1,7 @@
 "use server";
 
-import { createClient } from "../../lib/supabase/server"; // Adjust this path if needed
+import { createClient } from "@/lib/supabase/server";
+import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -19,7 +20,7 @@ export async function login(formData: FormData) {
   }
 
   revalidatePath("/");
-  redirect("/menu"); // Send them to the Meals28 menu after login
+  redirect("/");
 }
 
 export async function signup(formData: FormData) {
@@ -27,7 +28,7 @@ export async function signup(formData: FormData) {
   const password = formData.get("password") as string;
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
   });
@@ -36,8 +37,19 @@ export async function signup(formData: FormData) {
     return { error: error.message };
   }
 
+  // Sync the new Supabase auth user to the Prisma User table
+  if (data.user) {
+    await prisma.user.create({
+      data: {
+        id: data.user.id,
+        email,
+        role: "CUSTOMER",
+      },
+    });
+  }
+
   revalidatePath("/");
-  redirect("/menu");
+  redirect("/");
 }
 
 export async function logout() {
