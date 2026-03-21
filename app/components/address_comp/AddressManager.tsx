@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import AddressModal from "./AddressModal";
-import type { Address } from "@/generated/prisma";
+import type { Address } from "@/generated/prisma/client";
 
 export default function AddressManager({
   initialAddresses,

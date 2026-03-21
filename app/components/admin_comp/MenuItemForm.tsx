@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createMenuItem, updateMenuItem } from "@/app/actions/menu";
-import type { Category } from "@/generated/prisma";
+import type { Category } from "@/generated/prisma/client";
 
 interface MenuItemFormProps {
   categories: Category[];

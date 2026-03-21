@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Menu, X, ChevronLeft, LayoutGrid, List } from "lucide-react";
-import type { Category } from "@/generated/prisma";
+import type { Category } from "@/generated/prisma/client";
 
 interface SidebarProps {
   categories: Pick<Category, "id" | "name">[];

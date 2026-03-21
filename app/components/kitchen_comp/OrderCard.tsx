@@ -1,5 +1,5 @@
 import { Clock } from "lucide-react";
-import type { OrderStatus } from "@/generated/prisma";
+import type { OrderStatus } from "@/generated/prisma/client";
 
 interface OrderCardProps {
   order: {

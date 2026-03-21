@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useCartStore } from "@/app/store/cartStore";
 import { placeOrder } from "@/app/actions/order";
 import { useRouter } from "next/navigation";
-import type { Address } from "@/generated/prisma";
+import type { Address } from "@/generated/prisma/client";
 
 export default function CheckoutForm({ addresses }: { addresses: Address[] }) {
   const router = useRouter();

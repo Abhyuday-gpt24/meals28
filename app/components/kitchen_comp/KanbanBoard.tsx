@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { updateOrderStatus } from "@/app/actions/kitchen";
 import OrderCard from "./OrderCard";
-import type { OrderStatus } from "@/generated/prisma";
+import type { OrderStatus } from "@/generated/prisma/client";
 
 interface SerializedOrder {
   id: string;

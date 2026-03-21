@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import prisma from "@/lib/prisma";
-import type { User } from "@/generated/prisma";
+import type { User } from "@/generated/prisma/client";
 
 /** Returns the authenticated Prisma user, or null. For server components. */
 export async function getAuthenticatedUser(): Promise<User | null> {

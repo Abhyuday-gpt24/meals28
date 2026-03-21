@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { OrderStatus } from "@/generated/prisma";
+import type { OrderStatus } from "@/generated/prisma/client";
 
 const statusStyles: Record<string, string> = {
   PENDING: "bg-amber-100 text-amber-700",

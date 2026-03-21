@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { deleteMenuItem, toggleAvailability } from "@/app/actions/menu";
 import MenuItemForm from "./MenuItemForm";
-import type { Category } from "@/generated/prisma";
+import type { Category } from "@/generated/prisma/client";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 
 interface SerializedItem {
