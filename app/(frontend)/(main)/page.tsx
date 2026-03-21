@@ -5,6 +5,17 @@ import type { SerializedMenuItem } from "@/lib/types/menu";
 
 const PAGE_SIZE = 12;
 
+// Priority order for "All Menu" view — lower index = shown first
+const CATEGORY_PRIORITY = [
+  "Snacks",
+  "Chinese",
+  "South Indian",
+  "Sandwiches & Burgers",
+  "Drinks",
+  "Curries & Sabji",
+  "Pasta & Soups",
+];
+
 interface MenuPageProps {
   searchParams: Promise<{ category?: string; q?: string; page?: string }>;
 }
@@ -42,20 +53,49 @@ export default async function MenuPage({ searchParams }: MenuPageProps) {
       : {}),
   };
 
+  const isAllMenu = !selectedCategory && !searchQuery;
+
+  // Build a category name → priority map for sorting
+  let categoryPriorityMap: Map<string, number> | null = null;
+  if (isAllMenu) {
+    const allCategories = await prisma.category.findMany({
+      select: { id: true, name: true },
+    });
+    categoryPriorityMap = new Map();
+    for (const cat of allCategories) {
+      const idx = CATEGORY_PRIORITY.indexOf(cat.name);
+      categoryPriorityMap.set(cat.id, idx === -1 ? CATEGORY_PRIORITY.length : idx);
+    }
+  }
+
   const [menuItems, totalCount] = await Promise.all([
     prisma.menuItem.findMany({
       where,
       include: { category: true },
-      orderBy: { categoryId: "asc" },
-      skip: (currentPage - 1) * PAGE_SIZE,
-      take: PAGE_SIZE,
+      orderBy: { name: "asc" },
+      // Fetch all for priority sort on "All Menu", otherwise paginate normally
+      ...(isAllMenu ? {} : { skip: (currentPage - 1) * PAGE_SIZE, take: PAGE_SIZE }),
     }),
     prisma.menuItem.count({ where }),
   ]);
 
+  // Apply priority sort for "All Menu" then paginate in memory
+  let sortedItems = menuItems;
+  if (isAllMenu && categoryPriorityMap) {
+    sortedItems = [...menuItems].sort((a, b) => {
+      const pa = categoryPriorityMap!.get(a.categoryId ?? "") ?? CATEGORY_PRIORITY.length;
+      const pb = categoryPriorityMap!.get(b.categoryId ?? "") ?? CATEGORY_PRIORITY.length;
+      return pa - pb || a.name.localeCompare(b.name);
+    });
+    sortedItems = sortedItems.slice(
+      (currentPage - 1) * PAGE_SIZE,
+      currentPage * PAGE_SIZE,
+    );
+  }
+
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
-  const serializedItems: SerializedMenuItem[] = menuItems.map((item) => ({
+  const serializedItems: SerializedMenuItem[] = sortedItems.map((item) => ({
     ...item,
     price: item.price.toNumber(),
   }));

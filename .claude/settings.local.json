@@ -1,5 +1,7 @@
 {
   "permissions": {
-    "allow": []
+    "allow": [
+      "WebFetch(domain:meals28.com)"
+    ]
   }
 }
