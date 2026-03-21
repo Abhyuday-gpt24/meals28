@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { requireUser } from "@/lib/auth/getUser";
 import { checkoutSchema } from "@/lib/validations/checkout";
+import { getAppSettings } from "@/app/actions/settings";
 
 export async function placeOrder(formData: unknown) {
   // 1. Zod safely parses the incoming data
@@ -16,7 +17,7 @@ export async function placeOrder(formData: unknown) {
     };
   }
 
-  const { items, addressId } = parsedData.data;
+  const { items, addressId, couponCode } = parsedData.data;
 
   try {
     // 2. Get secure user session
@@ -60,17 +61,72 @@ export async function placeOrder(formData: unknown) {
       };
     });
 
-    // 4. Prisma transaction (Nested Write)
-    const newOrder = await prisma.order.create({
-      data: {
-        userId: user.id,
-        deliveryAddressId: addressId,
-        totalAmount: trueTotalAmount,
-        status: "PENDING", // Assuming you have an OrderStatus enum or default string
-        orderItems: {
-          create: orderItemsData, // Atomically creates the lines on the receipt
+    // 4. Apply coupon if provided
+    let discountAmount = 0;
+    let couponId: string | null = null;
+
+    if (couponCode && couponCode.trim().length > 0) {
+      const coupon = await prisma.coupon.findUnique({
+        where: { code: couponCode.toUpperCase().trim() },
+      });
+
+      if (
+        !coupon ||
+        !coupon.isActive ||
+        (coupon.expiresAt && coupon.expiresAt < new Date()) ||
+        (coupon.usageLimit !== null && coupon.usedCount >= coupon.usageLimit)
+      ) {
+        return { success: false, error: "Coupon is no longer valid" };
+      }
+
+      if (coupon.minOrderAmount && trueTotalAmount < coupon.minOrderAmount.toNumber()) {
+        return {
+          success: false,
+          error: `Minimum order of ₹${coupon.minOrderAmount.toNumber()} required for this coupon`,
+        };
+      }
+
+      if (coupon.discountType === "PERCENTAGE") {
+        discountAmount = (trueTotalAmount * coupon.discountValue.toNumber()) / 100;
+        if (coupon.maxDiscount) {
+          discountAmount = Math.min(discountAmount, coupon.maxDiscount.toNumber());
+        }
+      } else {
+        discountAmount = coupon.discountValue.toNumber();
+      }
+
+      discountAmount = Math.min(discountAmount, trueTotalAmount);
+      discountAmount = Math.round(discountAmount * 100) / 100;
+      couponId = coupon.id;
+    }
+
+    // Fetch delivery fee from settings
+    const { deliveryFee } = await getAppSettings();
+    const finalTotal = trueTotalAmount - discountAmount + deliveryFee;
+
+    // 5. Prisma transaction (Nested Write + coupon usage increment)
+    const newOrder = await prisma.$transaction(async (tx) => {
+      if (couponId) {
+        await tx.coupon.update({
+          where: { id: couponId },
+          data: { usedCount: { increment: 1 } },
+        });
+      }
+
+      return tx.order.create({
+        data: {
+          userId: user.id,
+          deliveryAddressId: addressId,
+          totalAmount: finalTotal,
+          deliveryFee,
+          discountAmount,
+          couponId,
+          status: "PENDING",
+          orderItems: {
+            create: orderItemsData,
+          },
         },
-      },
+      });
     });
 
     // Return success to the client so it can clear the cart and redirect

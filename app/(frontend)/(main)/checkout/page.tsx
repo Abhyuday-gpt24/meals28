@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { getAuthenticatedUser } from "@/lib/auth/getUser";
+import { getAppSettings } from "@/app/actions/settings";
 import { redirect } from "next/navigation";
 import CheckoutForm from "@/app/components/checkout_comp/CheckoutForm";
 import Link from "next/link";
@@ -8,10 +9,13 @@ export default async function CheckoutPage() {
   const user = await getAuthenticatedUser();
   if (!user) redirect("/login");
 
-  const addresses = await prisma.address.findMany({
-    where: { userId: user.id },
-    orderBy: { createdAt: "desc" },
-  });
+  const [addresses, settings] = await Promise.all([
+    prisma.address.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+    }),
+    getAppSettings(),
+  ]);
 
   return (
     <div className="mx-auto max-w-4xl pb-20">
@@ -40,7 +44,7 @@ export default async function CheckoutPage() {
           </Link>
         </div>
       ) : (
-        <CheckoutForm addresses={addresses} />
+        <CheckoutForm addresses={addresses} deliveryFee={settings.deliveryFee} />
       )}
     </div>
   );

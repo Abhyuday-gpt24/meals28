@@ -19,6 +19,9 @@ export const checkoutSchema = z.object({
 
   // The cart contents
   items: z.array(orderItemSchema).min(1, "Your cart cannot be empty"),
+
+  // Optional coupon code
+  couponCode: z.string().optional().or(z.literal("")),
 });
 
 // 3. Export the TypeScript type inferred directly from Zod
