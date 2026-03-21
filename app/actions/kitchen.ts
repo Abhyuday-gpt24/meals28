@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { requireUser } from "@/lib/auth/getUser";
 import { revalidatePath } from "next/cache";
-import type { OrderStatus } from "../../generated/prisma";
+import type { OrderStatus } from "@/generated/prisma";
 
 const validTransitions: Partial<Record<OrderStatus, OrderStatus[]>> = {
   PENDING: ["ACCEPTED", "CANCELLED"],

@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "../generated/prisma/client";
+import { PrismaClient } from "@/generated/prisma/client";
 
 // 1. Define the function that creates the Client with the Postgres Adapter
 const prismaClientSingleton = () => {
