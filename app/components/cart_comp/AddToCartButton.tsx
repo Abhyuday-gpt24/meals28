@@ -1,6 +1,7 @@
 "use client";
 
 import { useCartStore } from "../../store/cartStore";
+import { useToastStore } from "@/app/store/toastStore";
 import type { SerializedMenuItem } from "@/lib/types/menu";
 
 interface AddToCartButtonProps {
@@ -9,10 +10,14 @@ interface AddToCartButtonProps {
 
 export default function AddToCartButton({ item }: AddToCartButtonProps) {
   const addItem = useCartStore((state) => state.addItem);
+  const addToast = useToastStore((state) => state.addToast);
 
   return (
     <button
-      onClick={() => addItem(item)}
+      onClick={() => {
+        addItem(item);
+        addToast(`${item.name} added to cart!`);
+      }}
       // Removed w-full, reduced padding (px-4 py-2 instead of px-6 py-3), shrunk icon
       className="flex items-center justify-center gap-1.5 rounded-lg bg-gray-900 px-4 py-2 text-xs font-bold text-white transition-all hover:bg-indigo-600 active:scale-95"
     >

@@ -1,4 +1,5 @@
 import "./globals.css";
+import ToastContainer from "@/app/components/toast_comp/ToastContainer";
 
 export default function RootLayout({
   children,
@@ -8,8 +9,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-gray-50 text-gray-900">
-        {/* No Sidebar here! Just pure content delivery */}
         {children}
+        <ToastContainer />
       </body>
     </html>
   );
