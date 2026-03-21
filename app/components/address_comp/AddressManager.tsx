@@ -2,15 +2,23 @@
 
 import { useState } from "react";
 import AddressModal from "./AddressModal";
+import AddressCard from "./AddressCard";
 import { deleteAddress } from "@/app/actions/user";
-import { Pencil, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import type { Address } from "@/generated/prisma/client";
+
+interface AddressManagerProps {
+  initialAddresses: Address[];
+  /** When provided, enables selection mode and reports the selected address ID */
+  selectedId?: string;
+  onSelect?: (id: string) => void;
+}
 
 export default function AddressManager({
   initialAddresses,
-}: {
-  initialAddresses: Address[];
-}) {
+  selectedId,
+  onSelect,
+}: AddressManagerProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [error, setError] = useState("");
@@ -37,11 +45,14 @@ export default function AddressManager({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-bold text-gray-900">Saved Addresses</h3>
+        <h3 className="text-xl font-bold text-gray-900">
+          {onSelect ? "Select Delivery Address" : "Saved Addresses"}
+        </h3>
         <button
           onClick={handleAdd}
           className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-indigo-700"
         >
+          <Plus className="h-4 w-4" />
           Add New
         </button>
       </div>
@@ -54,56 +65,22 @@ export default function AddressManager({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {initialAddresses.map((address) => (
-          <div
+          <AddressCard
             key={address.id}
-            className="group rounded-2xl border bg-white p-5 shadow-sm"
-          >
-            <div className="mb-3 flex items-center justify-between">
-              <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-600">
-                {address.isDefault ? "Default" : "Address"}
-              </span>
-              <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                <button
-                  onClick={() => handleEdit(address)}
-                  className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
-                >
-                  <Pencil className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  onClick={() => handleDelete(address.id)}
-                  className="rounded p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-600"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            </div>
-            <p className="text-sm font-bold text-gray-900">{address.name}</p>
-            <p className="text-xs text-gray-500">{address.phone}</p>
-            <p className="mt-2 text-sm text-gray-700">{address.street}</p>
-            <p className="text-sm text-gray-500">
-              {address.city}, {address.state} {address.zipCode}
-            </p>
-          </div>
+            address={address}
+            selected={selectedId === address.id}
+            onSelect={onSelect ? () => onSelect(address.id) : undefined}
+            onEdit={() => handleEdit(address)}
+            onDelete={() => handleDelete(address.id)}
+          />
         ))}
 
-        {/* Big Add New Card */}
+        {/* Add New Card */}
         <button
           onClick={handleAdd}
           className="flex min-h-[140px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50/50 text-gray-400 transition-all hover:border-indigo-300 hover:text-indigo-600"
         >
-          <svg
-            className="mb-2 h-8 w-8"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M12 4.5v15m7.5-7.5h-15"
-            />
-          </svg>
+          <Plus className="mb-2 h-8 w-8" />
           <span className="text-sm font-semibold">Add New Address</span>
         </button>
       </div>

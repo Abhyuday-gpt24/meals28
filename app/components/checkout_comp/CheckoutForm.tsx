@@ -6,6 +6,7 @@ import { placeOrder } from "@/app/actions/order";
 import { applyCoupon } from "@/app/actions/coupon";
 import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
+import AddressManager from "@/app/components/address_comp/AddressManager";
 import type { Address } from "@/generated/prisma/client";
 
 export default function CheckoutForm({
@@ -84,56 +85,13 @@ export default function CheckoutForm({
 
   return (
     <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
-      {/* LEFT: Address Selection */}
-      <section className="space-y-6">
-        <h2 className="text-xl font-bold text-gray-900">1. Delivery Address</h2>
-        <div className="grid gap-4">
-          {addresses.map((addr) => (
-            <label
-              key={addr.id}
-              className={`relative flex cursor-pointer rounded-2xl border-2 p-4 transition-all ${
-                selectedAddressId === addr.id
-                  ? "border-indigo-600 bg-indigo-50/50"
-                  : "border-gray-100 bg-white hover:border-gray-200"
-              }`}
-            >
-              <input
-                type="radio"
-                name="address"
-                className="sr-only"
-                onChange={() => setSelectedAddressId(addr.id)}
-                checked={selectedAddressId === addr.id}
-              />
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-gray-900">
-                  {addr.name}
-                </span>
-                <span className="text-xs text-gray-500">{addr.phone}</span>
-                <span className="mt-1 text-sm text-gray-700">
-                  {addr.street}
-                </span>
-                <span className="text-xs text-gray-500">
-                  {addr.city}, {addr.state} {addr.zipCode}
-                </span>
-              </div>
-              {selectedAddressId === addr.id && (
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-600">
-                  <svg
-                    className="h-6 w-6"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-              )}
-            </label>
-          ))}
-        </div>
+      {/* LEFT: Address Selection (reuses profile address cards) */}
+      <section>
+        <AddressManager
+          initialAddresses={addresses}
+          selectedId={selectedAddressId}
+          onSelect={setSelectedAddressId}
+        />
       </section>
 
       {/* RIGHT: Order Summary */}
@@ -229,7 +187,7 @@ export default function CheckoutForm({
 
         <button
           onClick={handlePlaceOrder}
-          disabled={isSubmitting || items.length === 0}
+          disabled={isSubmitting || items.length === 0 || !selectedAddressId}
           className="mt-8 w-full rounded-xl bg-indigo-600 py-4 text-lg font-bold text-white shadow-lg shadow-indigo-200 transition-all hover:bg-indigo-700 active:scale-95 disabled:opacity-50"
         >
           {isSubmitting ? "Processing Order..." : "Confirm & Place Order"}
