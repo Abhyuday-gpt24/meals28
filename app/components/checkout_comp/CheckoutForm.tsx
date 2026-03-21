@@ -106,6 +106,10 @@ export default function CheckoutForm({
               />
               <div className="flex flex-col">
                 <span className="text-sm font-bold text-gray-900">
+                  {addr.name}
+                </span>
+                <span className="text-xs text-gray-500">{addr.phone}</span>
+                <span className="mt-1 text-sm text-gray-700">
                   {addr.street}
                 </span>
                 <span className="text-xs text-gray-500">

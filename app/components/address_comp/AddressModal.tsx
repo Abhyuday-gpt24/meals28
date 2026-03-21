@@ -1,16 +1,31 @@
 "use client";
 
-import { useState } from "react";
-import { addAddress } from "@/app/actions/user";
+import { useState, useEffect } from "react";
+import { addAddress, updateAddress } from "@/app/actions/user";
+import type { Address } from "@/generated/prisma/client";
 
 interface AddressModalProps {
   isOpen: boolean;
   onClose: () => void;
+  address?: Address | null;
 }
 
-export default function AddressModal({ isOpen, onClose }: AddressModalProps) {
+export default function AddressModal({
+  isOpen,
+  onClose,
+  address,
+}: AddressModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const isEditing = !!address;
+
+  // Reset form when modal opens with different address
+  useEffect(() => {
+    if (isOpen) {
+      setError(null);
+    }
+  }, [isOpen, address]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -18,16 +33,18 @@ export default function AddressModal({ isOpen, onClose }: AddressModalProps) {
     setError(null);
 
     const formData = new FormData(e.currentTarget);
-
-    // Exact mapping to match your Zod schema and Prisma model
     const payload = {
+      name: formData.get("name"),
+      phone: formData.get("phone"),
       street: formData.get("street"),
       city: formData.get("city"),
       state: formData.get("state"),
       zipCode: formData.get("zipCode"),
     };
 
-    const result = await addAddress(payload);
+    const result = isEditing
+      ? await updateAddress(address.id, payload)
+      : await addAddress(payload);
 
     setIsLoading(false);
 
@@ -48,8 +65,10 @@ export default function AddressModal({ isOpen, onClose }: AddressModalProps) {
       />
 
       <div className="relative w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
-        <div className="border-b px-6 py-4 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-gray-900">Add New Address</h2>
+        <div className="flex items-center justify-between border-b px-6 py-4">
+          <h2 className="text-xl font-bold text-gray-900">
+            {isEditing ? "Edit Address" : "Add New Address"}
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600"
@@ -70,14 +89,41 @@ export default function AddressModal({ isOpen, onClose }: AddressModalProps) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 p-6">
           {error && (
-            <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600 border border-red-200">
+            <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
               {error}
             </div>
           )}
 
-          {/* Removed the Address Type dropdown entirely to respect your schema */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Recipient Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                required
+                defaultValue={address?.name ?? ""}
+                placeholder="John Doe"
+                className="mt-1 w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-sm text-gray-900 outline-none focus:border-indigo-600 focus:bg-white focus:ring-1 focus:ring-indigo-600"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                name="phone"
+                required
+                defaultValue={address?.phone ?? ""}
+                placeholder="9876543210"
+                className="mt-1 w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-sm text-gray-900 outline-none focus:border-indigo-600 focus:bg-white focus:ring-1 focus:ring-indigo-600"
+              />
+            </div>
+          </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -87,6 +133,7 @@ export default function AddressModal({ isOpen, onClose }: AddressModalProps) {
               type="text"
               name="street"
               required
+              defaultValue={address?.street ?? ""}
               placeholder="123 Main St, Apt 4B"
               className="mt-1 w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-sm text-gray-900 outline-none focus:border-indigo-600 focus:bg-white focus:ring-1 focus:ring-indigo-600"
             />
@@ -101,6 +148,7 @@ export default function AddressModal({ isOpen, onClose }: AddressModalProps) {
                 type="text"
                 name="city"
                 required
+                defaultValue={address?.city ?? ""}
                 placeholder="Agra"
                 className="mt-1 w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-sm text-gray-900 outline-none focus:border-indigo-600 focus:bg-white focus:ring-1 focus:ring-indigo-600"
               />
@@ -113,6 +161,7 @@ export default function AddressModal({ isOpen, onClose }: AddressModalProps) {
                 type="text"
                 name="state"
                 required
+                defaultValue={address?.state ?? ""}
                 placeholder="UP"
                 className="mt-1 w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-sm text-gray-900 outline-none focus:border-indigo-600 focus:bg-white focus:ring-1 focus:ring-indigo-600"
               />
@@ -123,17 +172,17 @@ export default function AddressModal({ isOpen, onClose }: AddressModalProps) {
             <label className="block text-sm font-medium text-gray-700">
               ZIP / PIN Code
             </label>
-            {/* Changed name="zip" to name="zipCode" */}
             <input
               type="text"
               name="zipCode"
               required
+              defaultValue={address?.zipCode ?? ""}
               placeholder="282001"
               className="mt-1 w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-sm text-gray-900 outline-none focus:border-indigo-600 focus:bg-white focus:ring-1 focus:ring-indigo-600"
             />
           </div>
 
-          <div className="mt-6 flex justify-end gap-3 pt-4 border-t">
+          <div className="mt-6 flex justify-end gap-3 border-t pt-4">
             <button
               type="button"
               onClick={onClose}
@@ -146,7 +195,11 @@ export default function AddressModal({ isOpen, onClose }: AddressModalProps) {
               disabled={isLoading}
               className="flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-2 text-sm font-bold text-white shadow-sm transition-all hover:bg-indigo-700 disabled:opacity-70"
             >
-              {isLoading ? "Saving..." : "Save Address"}
+              {isLoading
+                ? "Saving..."
+                : isEditing
+                  ? "Update Address"
+                  : "Save Address"}
             </button>
           </div>
         </form>

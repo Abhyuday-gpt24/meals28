@@ -79,7 +79,9 @@ model Address {
   id            String    @id @default(uuid())
   userId        String
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
+  name          String    @default("") // Recipient name (can differ from account holder)
+  phone         String    @default("") // Recipient phone
   street        String
   city          String
   state         String
