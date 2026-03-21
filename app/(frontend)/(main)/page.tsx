@@ -1,15 +1,19 @@
 import prisma from "@/lib/prisma";
 import MenuGrid from "@/app/components/menu_comp/MenuGrid";
+import Pagination from "@/app/components/menu_comp/Pagination";
 import type { SerializedMenuItem } from "@/lib/types/menu";
 
+const PAGE_SIZE = 12;
+
 interface MenuPageProps {
-  searchParams: Promise<{ category?: string; q?: string }>;
+  searchParams: Promise<{ category?: string; q?: string; page?: string }>;
 }
 
 export default async function MenuPage({ searchParams }: MenuPageProps) {
   const params = await searchParams;
   const selectedCategory = params.category;
   const searchQuery = params.q;
+  const currentPage = Math.max(1, parseInt(params.page || "1", 10) || 1);
 
   const categoryName = selectedCategory
     ? (
@@ -20,34 +24,43 @@ export default async function MenuPage({ searchParams }: MenuPageProps) {
       )?.name ?? "Unknown Category"
     : null;
 
-  const menuItems = await prisma.menuItem.findMany({
-    where: {
-      isAvailable: true,
-      ...(selectedCategory ? { category: { id: selectedCategory } } : {}),
-      ...(searchQuery
-        ? {
-            OR: [
-              { name: { contains: searchQuery, mode: "insensitive" as const } },
-              {
-                description: {
-                  contains: searchQuery,
-                  mode: "insensitive" as const,
-                },
+  const where = {
+    isAvailable: true,
+    ...(selectedCategory ? { category: { id: selectedCategory } } : {}),
+    ...(searchQuery
+      ? {
+          OR: [
+            { name: { contains: searchQuery, mode: "insensitive" as const } },
+            {
+              description: {
+                contains: searchQuery,
+                mode: "insensitive" as const,
               },
-            ],
-          }
-        : {}),
-    },
-    include: { category: true },
-    orderBy: { categoryId: "asc" },
-  });
+            },
+          ],
+        }
+      : {}),
+  };
+
+  const [menuItems, totalCount] = await Promise.all([
+    prisma.menuItem.findMany({
+      where,
+      include: { category: true },
+      orderBy: { categoryId: "asc" },
+      skip: (currentPage - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.menuItem.count({ where }),
+  ]);
+
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
   const serializedItems: SerializedMenuItem[] = menuItems.map((item) => ({
     ...item,
     price: item.price.toNumber(),
   }));
 
-  if (serializedItems.length === 0) {
+  if (serializedItems.length === 0 && currentPage === 1) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
         <h2 className="text-2xl font-bold text-gray-900">
@@ -73,6 +86,9 @@ export default async function MenuPage({ searchParams }: MenuPageProps) {
         </div>
       )}
       <MenuGrid items={serializedItems} />
+      {totalPages > 1 && (
+        <Pagination currentPage={currentPage} totalPages={totalPages} />
+      )}
     </main>
   );
 }
