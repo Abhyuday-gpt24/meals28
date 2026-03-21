@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { useCartStore } from "../../store/cartStore";
 import CartDrawer from "../cart_comp/CartDrawer";
 import SearchBar from "../search_bar_comp/SearchBar";
@@ -18,18 +20,24 @@ export default function Header({ user }: HeaderProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-30 flex h-20 items-center justify-between border-b bg-white/80 px-4 backdrop-blur-md lg:px-8">
-        {/* Left Side: Mobile Spacing */}
-        <div className="flex flex-1 items-center gap-4 lg:hidden">
-          {/* Spacing for mobile hamburger menu */}
-        </div>
+      <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-white/80 px-4 backdrop-blur-md lg:px-8">
+        {/* Left: Logo */}
+        <Link href="/" className="shrink-0">
+          <Image
+            src="https://meals28.com/wp-content/uploads/2025/11/meals28-logo1.png"
+            alt="Meals28"
+            width={120}
+            height={28}
+            className="object-contain"
+          />
+        </Link>
 
-        {/* Center: The new SearchBar Component */}
-        <div className="hidden flex-1 items-center lg:flex">
+        {/* Center: Search (desktop) */}
+        <div className="mx-6 hidden max-w-md flex-1 lg:block">
           <SearchBar />
         </div>
 
-        {/* Right Side: Cart & Profile */}
+        {/* Right: Cart & Profile */}
         <div className="flex items-center gap-4 lg:gap-6">
           {/* Cart Trigger Button */}
           <button

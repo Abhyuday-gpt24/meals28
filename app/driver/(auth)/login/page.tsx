@@ -42,9 +42,11 @@ export default function DriverAuthPage() {
     <div className="flex min-h-screen items-center justify-center bg-green-50 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8 rounded-2xl bg-white p-8 shadow-xl ring-1 ring-green-200">
         <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-            MEALS28
-          </h2>
+          <img
+            src="https://meals28.com/wp-content/uploads/2025/11/meals28-logo1.png"
+            alt="Meals28"
+            className="mx-auto h-10 object-contain"
+          />
           <p className="mt-2 text-sm text-green-600 font-medium">
             {isLogin
               ? "Driver Portal — Sign in to continue"

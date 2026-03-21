@@ -1,6 +1,7 @@
 import { getAuthenticatedUser } from "@/lib/auth/getUser";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { LayoutDashboard, UtensilsCrossed, Tag, Ticket, Settings, LogOut } from "lucide-react";
 import { logout } from "@/app/actions/auth";
 
@@ -17,8 +18,14 @@ export default async function AdminLayout({
       {/* Sidebar */}
       <aside className="flex w-64 flex-col border-r bg-white">
         <div className="border-b px-6 py-5">
-          <h1 className="text-lg font-black text-gray-900">MEALS28</h1>
-          <p className="text-xs font-medium text-gray-500">Admin Dashboard</p>
+          <Image
+            src="https://meals28.com/wp-content/uploads/2025/11/meals28-logo1.png"
+            alt="Meals28"
+            width={120}
+            height={28}
+            className="object-contain"
+          />
+          <p className="mt-1 text-xs font-medium text-gray-500">Admin Dashboard</p>
         </div>
         <nav className="space-y-1 p-4">
           <Link

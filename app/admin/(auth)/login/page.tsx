@@ -42,9 +42,11 @@ export default function AdminAuthPage() {
     <div className="flex min-h-screen items-center justify-center bg-slate-900 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8 rounded-2xl bg-slate-800 p-8 shadow-xl ring-1 ring-slate-700">
         <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-white">
-            MEALS28
-          </h2>
+          <img
+            src="https://meals28.com/wp-content/uploads/2025/11/meals28-logo1.png"
+            alt="Meals28"
+            className="mx-auto h-10 object-contain brightness-0 invert"
+          />
           <p className="mt-2 text-sm text-slate-400">
             {isLogin
               ? "Admin Portal — Sign in to continue"

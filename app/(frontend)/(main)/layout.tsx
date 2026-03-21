@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import Sidebar from "@/app/components/side_bar_comp/Sidebar";
+import CategoryBar from "@/app/components/category_bar_comp/CategoryBar";
 import Header from "@/app/components/header_comp/Header";
 import prisma from "@/lib/prisma";
 import { getAuthenticatedUser } from "@/lib/auth/getUser";
@@ -25,15 +25,12 @@ export default async function MainLayout({
     : null;
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex min-h-screen flex-col bg-gray-50">
+      <Header user={user} />
       <Suspense>
-        <Sidebar categories={categories} />
+        <CategoryBar categories={categories} />
       </Suspense>
-
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <Header user={user} />
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8">{children}</main>
-      </div>
+      <main className="flex-1 p-4 lg:p-8">{children}</main>
     </div>
   );
 }

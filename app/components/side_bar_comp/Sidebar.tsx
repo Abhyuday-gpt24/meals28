@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Menu, X, ChevronLeft, LayoutGrid, List } from "lucide-react";
@@ -57,14 +58,13 @@ export default function Sidebar({ categories }: SidebarProps) {
             href="/"
             className="flex items-center gap-2 overflow-hidden whitespace-nowrap"
           >
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-600 text-white font-bold">
-              M
-            </div>
-            <span
-              className={`text-xl font-black tracking-tight text-indigo-600 transition-all duration-300 ${isCollapsed ? "opacity-0 w-0" : "opacity-100"}`}
-            >
-              MEALS<span className="text-gray-900">28</span>
-            </span>
+            <Image
+              src="https://meals28.com/wp-content/uploads/2025/11/meals28-logo1.png"
+              alt="Meals28"
+              width={isCollapsed ? 32 : 140}
+              height={32}
+              className="shrink-0 object-contain transition-all duration-300"
+            />
           </Link>
 
           <button
