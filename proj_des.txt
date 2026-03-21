@@ -1,0 +1,66 @@
+Meals28 — Restaurant Ordering & Delivery Platform
+===================================================
+
+Meals28 is a full-stack, multi-role restaurant ordering and delivery platform built with
+Next.js 16, React 19, and TypeScript. It provides a complete end-to-end solution for
+restaurant operations — from menu browsing and order placement to kitchen preparation
+tracking and last-mile delivery management.
+
+The platform serves four distinct user roles, each with a dedicated portal:
+
+  - Customers browse a categorized menu, add items to a persistent cart, apply discount
+    coupons, select from saved delivery addresses (with recipient name and phone for
+    ordering on behalf of others), and place orders with real-time price verification.
+
+  - Admins manage the entire restaurant backend through a dashboard — creating and editing
+    menu items and categories, managing discount coupons (percentage or flat, with usage
+    limits, minimum order amounts, and expiry dates), configuring delivery fees, and
+    monitoring order statistics and revenue.
+
+  - Kitchen Staff track incoming orders on a real-time Kanban board powered by Supabase
+    Realtime subscriptions. Orders flow through four columns — Pending, Accepted,
+    Preparing, and Ready — with optimistic UI updates for a seamless workflow.
+
+  - Drivers view available orders ready for pickup, claim deliveries atomically (preventing
+    double-claims through database-level guards), and mark orders as delivered.
+
+Key Technical Highlights:
+
+  - Built on Next.js 16 App Router with the proxy.ts pattern for route protection and
+    role-based access control (RBAC), replacing traditional middleware.
+
+  - All mutations happen through Server Actions organized by domain — no REST API routes.
+    Every action validates input with Zod schemas and enforces role-based authorization.
+
+  - Prisma 7 with the PrismaPg adapter handles all database operations. Monetary fields
+    use the Decimal type for precision, with careful serialization before sending to
+    client components.
+
+  - Supabase provides authentication (email/password) and real-time database change
+    subscriptions for the kitchen Kanban board.
+
+  - Zustand manages client-side cart state with localStorage persistence, keeping the
+    cart intact across browser sessions.
+
+  - Server-side price verification on checkout prevents client-side price manipulation.
+    The order total is always recalculated from database prices, not from what the
+    client sends.
+
+  - Coupon system supports percentage and flat discounts with configurable minimum order
+    amounts, maximum discount caps, usage limits, and expiration dates. Coupon usage is
+    incremented atomically within a database transaction alongside order creation.
+
+  - Delivery fee is admin-configurable through a settings page and captured on each order
+    at checkout time, preserving historical accuracy.
+
+  - Address management allows customers to save multiple delivery addresses with recipient
+    name and phone number, enabling food ordering for someone else. Addresses can be
+    added, edited, and deleted from both the profile page and directly during checkout.
+
+  - The UI is built with Tailwind CSS 4, using consistent color themes per role — indigo
+    for customers, slate for admin, amber for kitchen, and green for drivers. Icons come
+    from lucide-react.
+
+Tech Stack:
+  Next.js 16 | React 19 | TypeScript 5 | Prisma 7 | Supabase | Zod 4 | Zustand 5 |
+  Tailwind CSS 4 | lucide-react | Deployed on Vercel
