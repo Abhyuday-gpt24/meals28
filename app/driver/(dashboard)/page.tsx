@@ -34,6 +34,8 @@ export default async function DriverPage() {
     orders.map((o) => ({
       ...o,
       totalAmount: o.totalAmount.toNumber(),
+      discountAmount: o.discountAmount.toNumber(),
+      deliveryFee: o.deliveryFee.toNumber(),
       orderItems: o.orderItems.map((item) => ({
         ...item,
         unitPrice: item.unitPrice.toNumber(),

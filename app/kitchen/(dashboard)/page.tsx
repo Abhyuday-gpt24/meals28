@@ -17,6 +17,8 @@ export default async function KitchenPage() {
   const serialized = orders.map((order) => ({
     ...order,
     totalAmount: order.totalAmount.toNumber(),
+    discountAmount: order.discountAmount.toNumber(),
+    deliveryFee: order.deliveryFee.toNumber(),
     orderItems: order.orderItems.map((item) => ({
       ...item,
       unitPrice: item.unitPrice.toNumber(),
